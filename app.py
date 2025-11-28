@@ -13,34 +13,51 @@ from dashboard.layout import render_layout
 
 # --- Configuración inicial ---
 st.set_page_config(
-    #page_title="📊 MegaStore Dashboard (Python)",
     layout="wide",  
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
+    page_title="Dashboard Analítico" # Opcional: ponerle título a la pestaña
 )
 
-# Aplico CSS global
+# --- Aplicar CSS ---
+# IMPORTANTE: Esto queda fuera de la caché para que veas los cambios 
+# visuales inmediatamente cada vez que edites los archivos CSS.
 apply_custom_css()
 
-# --- Carga de datos crudos ---
-clientes = pd.read_csv("data/raw/clientes.csv")
-localizacion = pd.read_csv("data/raw/localizacion.csv")
-productos = pd.read_csv("data/raw/productos.csv")
-ordenes = pd.read_csv("data/raw/ordenes.csv")
+# --- Función ETL con Caché ---
+# Streamlit ejecutará esto la primera vez. Las siguientes veces, si el código
+# de esta función no cambió, leerá el resultado de la memoria RAM instantáneamente.
+@st.cache_data(show_spinner="Cargando y procesando datos...")
+def cargar_modelo_datos():
+    # 1. Carga de datos crudos
+    clientes = pd.read_csv("data/raw/clientes.csv")
+    localizacion = pd.read_csv("data/raw/localizacion.csv")
+    productos = pd.read_csv("data/raw/productos.csv")
+    ordenes = pd.read_csv("data/raw/ordenes.csv")
 
-# --- ETL modular ---
-clientes = transformar_clientes(clientes)
-localizacion = transformar_localizacion(localizacion)
-productos = transformar_productos(productos)
-ordenes = transformar_ordenes(ordenes)
-# --- Generar calendario ---
-calendar = generar_calendar(ordenes)
+    # 2. ETL modular
+    clientes = transformar_clientes(clientes)
+    localizacion = transformar_localizacion(localizacion)
+    productos = transformar_productos(productos)
+    ordenes = transformar_ordenes(ordenes)
 
-# --- Construcción del modelo estrella ---
-df = construir_modelo(clientes, localizacion, productos, ordenes, calendar)
+    # 3. Generar calendario
+    calendar = generar_calendar(ordenes)
+
+    # 4. Construcción del modelo estrella
+    df_final = construir_modelo(clientes, localizacion, productos, ordenes, calendar)
+    
+    return df_final
+
+# --- Ejecución Principal ---
+
+# Llamamos a la función cacheada
+df = cargar_modelo_datos()
 
 # --- Sidebar de filtros ---
+# ESTO ES CRÍTICO: Asegúrate de que OrderDate sea de tipo datetime
+if not pd.api.types.is_datetime64_any_dtype(df["OrderDate"]):
+    df["OrderDate"] = pd.to_datetime(df["OrderDate"], errors='coerce')
 df_filtrado = render_filters(df)
 
-st.title("📊 MegaStore Dashboard (Python)")
-
+# --- Renderizar Layout ---
 render_layout(df_filtrado)
