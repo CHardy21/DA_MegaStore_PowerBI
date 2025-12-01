@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Importar las funciones de los módulos
-from .filter_modules.year_filter import render_year_filter
+from .filter_modules.year_fllter_SegmentedControl import render_year_filter
 from .filter_modules.category_filter import render_category_filter
 
 

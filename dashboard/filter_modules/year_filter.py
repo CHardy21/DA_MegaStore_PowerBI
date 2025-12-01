@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-def render_year_filter(df: pd.DataFrame):
+def render_year_filter(df):
     
     # 1. Obtener opciones (como ENTEROS)
     years_series = df["OrderDate"].dt.year.dropna()
