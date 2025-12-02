@@ -6,7 +6,6 @@ from .filter_modules.year_filter import render_year_filter
 from .filter_modules.category_filter import render_category_filter
 
 
-
 def aplicar_filtro(df: pd.DataFrame, columna: str, seleccion, todas_opciones=None) -> pd.DataFrame:
     """
     Aplica filtro universal para cualquier columna y selección.
@@ -37,7 +36,6 @@ def aplicar_filtro(df: pd.DataFrame, columna: str, seleccion, todas_opciones=Non
     return df[df[columna] == seleccion]
 
 
-
 def render_filters(df: pd.DataFrame) -> pd.DataFrame:
     """
     Renderiza todos los filtros en la sidebar, obtiene sus valores
@@ -45,29 +43,21 @@ def render_filters(df: pd.DataFrame) -> pd.DataFrame:
     """
     st.sidebar.title("🔎 Filtros")
 
-    # --- Estado inicial ---
-    if "reset" not in st.session_state:
-        st.session_state.reset = False
+    years = sorted(df["OrderDate"].dt.year.dropna().unique().tolist())
+    categorias = sorted(df["Category"].dropna().unique().tolist())
 
-    # 1. Obtener valores de los filtros llamando a los módulos:
-    if st.session_state.reset:
-        # Si se presionó reset → vaciamos selección
-        year = None
-        categoria = []
-        st.session_state.reset = False
-    else:
-        year = render_year_filter(df, tipo="segmentedControl")        # Debe devolver INT
-        categoria = render_category_filter(df, tipo="selectbox")      # Puede devolver STR, lista o "Todas"
+    # --- Renderizado de filtros ---
+    year = render_year_filter(df, tipo="segmentedControl", default=None)   # selección única
+    categoria = render_category_filter(df, tipo="selectbox")               # incluye "Todas"
 
-    # --- LÍNEAS DE DEBUG (PARA VER EL VALOR Y EL TIPO) ---
+    # --- Debug ---
     st.sidebar.caption(f"DEBUG YEAR: '{year}' (Type: {type(year).__name__})")
     st.sidebar.caption(f"DEBUG CAT: '{categoria}' (Type: {type(categoria).__name__})")
-    # -----------------------------------------------------
 
     # --- Aplicación de Filtros ---
     df_filtrado = df.copy()
 
-    # 2. Aplicar filtro de Año
+    # Filtro de Año
     if year is not None:
         try:
             year_int = int(year)
@@ -75,19 +65,7 @@ def render_filters(df: pd.DataFrame) -> pd.DataFrame:
         except ValueError:
             st.warning("Advertencia de filtro: El valor del año no es un número entero.")
 
-    # 3. Aplicar filtro de Categoría
-    todas_categorias = df["Category"].unique().tolist()
+    # Filtro de Categoría
+    df_filtrado = aplicar_filtro(df_filtrado, "Category", categoria, todas_opciones=categorias)
 
-    # Normalizar selección: si incluye "Todas", lo tratamos como lista vacía
-    if isinstance(categoria, list) and "Todas" in categoria:
-        categoria = []
-
-    df_filtrado = aplicar_filtro(df_filtrado, "Category", categoria, todas_opciones=todas_categorias)
-
-    # --- Botón Reset ---
-    if st.sidebar.button("🔄 Resetear filtros"):
-        st.session_state.reset = True
-        st.rerun()
-
-    # 4. Retorna el DataFrame filtrado
     return df_filtrado
