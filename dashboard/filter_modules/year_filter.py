@@ -1,92 +1,42 @@
 import streamlit as st
 import pandas as pd
 
+def render_year_filter(df, tipo="selectbox", default=None):
+    """
+    Renderiza el filtro de Año con distintos estilos según 'tipo'.
+    - default: valor o lista de valores seleccionados por defecto (None = vacío).
+    """
+    years = sorted(df["OrderDate"].dt.year.dropna().unique().tolist())
 
-def render_year_filter(df, tipo="selectbox"):
-    
-    # Valores únicos de año
-    years = sorted(df["OrderDate"].dt.year.dropna().unique())
-    
-    # Segmentador dinámico según tipo
     if tipo == "selectbox":
-        year = st.sidebar.selectbox("Año", years)
-    
+        # Si default es None → no selección inicial
+        index = years.index(default) if default in years else 0
+        year = st.sidebar.selectbox("Año", years, index=index)
+
     elif tipo == "radio":
-        years = sorted(df["OrderDate"].dt.year.dropna().unique())
-        year = st.sidebar.radio("Año", years, horizontal=True)
+        index = years.index(default) if default in years else 0
+        year = st.sidebar.radio("Año", years, index=index, horizontal=True)
 
     elif tipo == "segmentedControl":
-        years = sorted(df["OrderDate"].dt.year.dropna().unique())
-        year = st.sidebar.segmented_control("Año", years)
+        year = st.sidebar.segmented_control("Año", years, default=default)
 
-    elif tipo == "buttons":
-        if "selected_year" not in st.session_state:
-            st.session_state.selected_year = years[-1]
-
-        # Usamos filas dinámicas en el sidebar
-        n_cols = 3  # cantidad de botones por fila
-        for i in range(0, len(years), n_cols):
-            cols = st.sidebar.columns(n_cols)
-            for j, y in enumerate(years[i:i+n_cols]):
-                if cols[j].button(str(y), key=f"btn_{y}"):
-                    st.session_state.selected_year = y
-
-        year = st.session_state.selected_year
-
-    elif tipo == "buttons2":
-        # CSS para resaltar el botón activo
-        st.markdown("""
-            <style>
-            .pill-container {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-            .pill-button {
-                border: none;
-                border-radius: 20px;
-                padding: 6px 14px;
-                background-color: #f0f2f6;
-                font-weight: 600;
-                cursor: pointer;
-            }
-            .pill-button.active {
-                background-color: #4CAF50;
-                color: white;
-            }
-            </style>
-        """, unsafe_allow_html=True)
-
-        # Render dinámico con estado
-        st.markdown("<div class='pill-container'>", unsafe_allow_html=True)
-        for y in years:
-            active_class = "active" if st.session_state.selected_year == y else ""
-            if st.button(f"{y}", key=f"btn_{y}"):
-                st.session_state.selected_year = y
-            st.markdown(
-                f"<button class='pill-button {active_class}'>{y}</button>",
-                unsafe_allow_html=True
-            )
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        year = st.session_state.selected_year
-        
     elif tipo == "multiselect":
-        year = st.sidebar.multiselect("Año", years, default=[years[-1]])
-    
+        year = st.sidebar.multiselect("Año", years, default=default if default else [])
+
     elif tipo == "checkboxes":
-        # Renderizar cada año como checkbox
+        st.sidebar.subheader("Año")
         selected_years = []
         for y in years:
-            if st.sidebar.checkbox(str(y), value=(y == years[-1])):
+            if st.sidebar.checkbox(str(y), value=(default and y in default)):
                 selected_years.append(y)
         year = selected_years
-    
+
     else:
         st.sidebar.warning("Tipo de filtro no soportado")
         year = None
-    
+
     return year
+
 
 
 

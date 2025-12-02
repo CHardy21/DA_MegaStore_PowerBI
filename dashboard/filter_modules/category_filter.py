@@ -33,6 +33,7 @@ def render_category_filter(df: pd.DataFrame, tipo="selectbox"):
         categoria = st.sidebar.multiselect("Categoría", options, default=[options[0]])
 
     elif tipo == "checkboxes":
+        st.sidebar.subheader("Categoría") 
         selected_cats = []
         for cat in options:
             if st.sidebar.checkbox(str(cat), value=(cat == options[0])):
