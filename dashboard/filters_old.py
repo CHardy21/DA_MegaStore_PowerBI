@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Importar las funciones de los módulos
-from .filter_modules.year_filter import render_year_filter
+from .filter_modules.year_fllter_SegmentedControl import render_year_filter
 from .filter_modules.category_filter import render_category_filter
 
 
@@ -16,10 +16,10 @@ def render_filters(df: pd.DataFrame) -> pd.DataFrame:
     # 1. Obtener valores de los filtros llamando a los módulos:
     
     # Llama al módulo de año (Debe devolver INT)
-    year = render_year_filter(df, tipo="segmentedControl") 
+    year = render_year_filter(df) 
     
     # Llama al módulo de categoría (Debe devolver STR, o "Todas")
-    categoria = render_category_filter(df, tipo="selectbox")
+    categoria = render_category_filter(df)
     
     # --- LÍNEAS DE DEBUG (PARA VER EL VALOR Y EL TIPO) ---
     st.sidebar.caption(f"DEBUG YEAR: '{year}' (Type: {type(year).__name__})")
@@ -28,6 +28,7 @@ def render_filters(df: pd.DataFrame) -> pd.DataFrame:
 
     
     # --- Aplicación de Filtros (Lógica Secuencial Confirmada) ---
+    
     df_filtrado = df.copy() 
     
     # 2. Aplicar filtro de Año 
@@ -50,4 +51,24 @@ def render_filters(df: pd.DataFrame) -> pd.DataFrame:
     return df_filtrado
 
 
+# import streamlit as st
 
+# def render_filters(df):
+#     st.sidebar.title("🔎 Filtros")
+    
+#     year = st.sidebar.selectbox(
+#         "Año",
+#         sorted(df["OrderDate"].dt.year.dropna().unique())
+#     )
+    
+#     categoria = st.sidebar.selectbox(
+#         "Categoría",
+#         ["Todas"] + sorted(df["Category"].dropna().unique())
+#     )
+    
+#     # --- Aplicación de filtros ---
+#     df_filtrado = df[df["OrderDate"].dt.year == year]
+#     if categoria != "Todas":
+#         df_filtrado = df_filtrado[df_filtrado["Category"] == categoria]
+    
+#     return df_filtrado

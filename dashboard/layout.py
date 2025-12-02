@@ -3,7 +3,7 @@ from dashboard.kpis import render_kpis
 from dashboard.charts import render_charts
 
 def render_layout(df_filtrado):
-    st.title("MegaStore Dashboard")
+    st.title("MegaStore Dashboard ")
 
     # KPIs en fila superior
     render_kpis(df_filtrado)
