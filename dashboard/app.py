@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from etl.transformar_clientes import transformar_clientes
-from etl.transformar_localizacion import transformar_localizacion
-from etl.transformar_productos import transformar_productos
-from etl.transformar_ordenes import transformar_ordenes
-from etl.build_modelo_estrella import construir_modelo
-from etl.generar_calendar import generar_calendar
+from etl.ms_transformar_clientes import transformar_clientes
+from etl.ms_transformar_localizacion import transformar_localizacion
+from etl.ms_transformar_productos import transformar_productos
+from etl.ms_transformar_ordenes import transformar_ordenes
+from etl.ms_build_modelo_estrella import construir_modelo
+from etl.ms_generar_calendar import generar_calendar
 
 
 # --- Carga de datos crudos ---
