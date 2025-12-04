@@ -1,0 +1,21 @@
+producto_id,nombre_producto,categoria_producto,precio_unitario_usd
+1,Laptop Premium,Tecnologia_Remoto,1200
+2,Monitor UltraHD,Tecnologia_Remoto,450
+3,Webcam Full HD,Tecnologia_Remoto,70
+4,Router WiFi 6,Tecnologia_Remoto,150
+5,Impresora Multifunción,Tecnologia_Remoto,220
+6,Heladera No Frost,Linea_Blanca,900
+7,Lavadora Carga Frontal,Linea_Blanca,750
+8,Cocina Vitrocerámica,Linea_Blanca,600
+9,Microondas Digital,Linea_Blanca,180
+10,Aire Acondicionado Inverter,Linea_Blanca,1100
+11,"Smart TV 55""",Accesorios_Entretenimiento,800
+12,Consola Gaming,Accesorios_Entretenimiento,500
+13,Auriculares Inalámbricos,Accesorios_Entretenimiento,120
+14,Smartwatch Deportivo,Accesorios_Entretenimiento,250
+15,Parlante Bluetooth,Accesorios_Entretenimiento,80
+16,Tablet Pro,Tecnologia_Remoto,600
+17,Cafetera Espresso,Linea_Blanca,100
+18,Aspiradora Robot,Linea_Blanca,300
+19,Licuadora de Alta Potencia,Linea_Blanca,90
+20,Barra de Sonido,Accesorios_Entretenimiento,200
