@@ -56,7 +56,7 @@ Trabajo realizado por **Christian R. Hardy**
 
 ## 🤝 Contribuciones
 
-¡Contribuciones y comentarios son bienvenidas!
+¡Contribuciones y comentarios son bienvenidos!
 
 ---
 
